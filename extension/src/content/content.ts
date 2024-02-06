@@ -1,5 +1,5 @@
 window.onload = function () {
-  let text = document.body.innerText;
+  let text = document.body.outerHTML;
   console.log(text);
 
   fetch("http://127.0.0.1:8000/page", {
