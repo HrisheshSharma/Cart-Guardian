@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cart Guardian</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-      crossorigin="anonymous"
-    />
-    <style>
-      body {
-        background-color: #efefef;
-        padding: 20px;
-      }
-      .switch-label {
-        display: flex;
-        align-items: center;
-      }
-      .switch-label span {
-        margin-right: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- Title -->
-      <h1 class="text-bold mb-4" style="text-align: center" id="extensionTitle">
-        Cart Guardian
-      </h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cart Guardian</title>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="bootstrap-5.3.2-dist/bootstrap-5.3.2-dist/css/bootstrap.min.css"
+        />
+        <!-- Custom CSS -->
+        <style>
+            body {
+                background-color: #efefef;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- Title -->
+            <h1
+                class="text-bold mb-4"
+                style="text-align: center"
+                id="extensionTitle"
+            >
+                Cart Guardian
+            </h1>
 
-      <!-- Switches -->
-      <div class="form-group">
-        <div class="switch-label">
-          <span>Switch 1</span>
-          <label class="switch">
-            <input type="checkbox" id="switch1" />
-            <span class="slider round"></span>
-          </label>
+            <!-- Switches -->
+            <div class="form-group">
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="PriceTracking"
+                    />
+                    <label class="form-check-label" for="PriceTracking"
+                        >Price Tracking</label
+                    >
+                </div>
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="DefaultDisabler"
+                    />
+                    <label class="form-check-label" for="DefaultDisabler"
+                        >Default Disabler</label
+                    >
+                </div>
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        id="Simplifier"
+                    />
+                    <label class="form-check-label" for="Simplifier"
+                        >Simplifier</label
+                    >
+                </div>
+                <!-- Add more switches here as needed -->
+            </div>
         </div>
-        <div class="switch-label">
-          <span>Switch 2</span>
-          <label class="switch">
-            <input type="checkbox" id="switch2" />
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <!-- Add more switches here as needed -->
-      </div>
-    </div>
 
-    <!-- Bootstrap JS and jQuery -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"
-    ></script>
-
-    <!-- Custom Script -->
-    <script>
-      // Get the switches status and log it
-      $(document).ready(function () {
-        $('input[type="checkbox"]').change(function () {
-          var switchId = $(this).attr("id");
-          var switchStatus = $(this).is(":checked") ? "ON" : "OFF";
-          console.log("Switch " + switchId + " is " + switchStatus);
-        });
-      });
-    </script>
-  </body>
+        <!-- Bootstrap JS and jQuery -->
+        <script
+            src="bootstrap-5.3.2-dist/bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"
+        ></script>
+        <script
+            src="index.js"
+        ></script>
+    </body>
 </html>
