@@ -4,3 +4,4 @@ class PageData(BaseModel):
     pageUrl: str
     pageTitle: str
     pageData: str
+    # enabledFeatures: list
