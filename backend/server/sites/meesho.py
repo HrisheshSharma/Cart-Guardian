@@ -1,8 +1,13 @@
+import re
+
+priceClass = re.compile(r'sc-[a-zA-Z]{6}\s[a-zA-Z]{6}$')
+producDetailsClass = re.compile(r'sc-[a-zA-Z]{6}\s[a-zA-Z]{6}\sProductDescription__DetailsCardStyled-sc-1l1jg0i-0\s[a-zA-Z]{6}\sProductDescription__DetailsCardStyled-sc-1l1jg0i-0\s[a-zA-Z]{6}')
+imageClassPattern = re.compile(r'sc-[a-zA-Z]{6}\s[a-zA-Z]{6}\sProductCard__StyledCarousel-sc-camkhj-6\siGvXSJ');
 class Meesho:
     product_name = {
-        'element': 'span',
+        'element': 'div',
         'attrs': {
-            'id': 'fhfLdV'
+            'class': 'sc-bcXHqe hcOLTO ShippingInfo__DetailCard-sc-frp12n-0 dKuTbW ShippingInfo__DetailCard-sc-frp12n-0 dKuTbW'
             }
         }
 
@@ -16,7 +21,7 @@ class Meesho:
     discounted_price = {
         'element': 'h4',
         'attrs': {
-            'class': 'biMVPh'
+            'class': priceClass
             }
         }
 
@@ -39,7 +44,7 @@ class Meesho:
     product_details = {
         'element': 'div',
         'attrs': {
-            'class': 'hqYVzH'
+            'class': producDetailsClass
         }
     }
 
@@ -73,7 +78,7 @@ class Meesho:
     product_images = {
         'element': 'div',
         'attrs': {
-            'class': 'FJrwp'
+            'class': imageClassPattern
         }
     }
     
