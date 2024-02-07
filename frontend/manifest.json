@@ -32,7 +32,8 @@
                 "<all_urls>"
             ],
             "js": [
-                "/content/content.js"
+                "/content/content.js",
+                "index.js"
             ]
         }
     ]
