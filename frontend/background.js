@@ -21,6 +21,10 @@ chrome.runtime.onMessage.addListener((request, _, __) => {
     console.log('Got the switch status from index:', payload)
     if (payload.switch_id === 'DefaultDisabler' && payload.switch_response === true) {
       contentScriptPort.postMessage({ response: "Start Default Disabler" });
+    } else if (payload.switch_id === 'Review' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "Start Review" });
+    } else if (payload.switch_id === 'Review' && payload.switch_response === false) {
+      contentScriptPort.postMessage({ response: "Close Review" });
     }
   }
 });
