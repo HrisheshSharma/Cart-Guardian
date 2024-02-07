@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var switchId = sw.id;
             var switchStatus = sw.checked ? "ON" : "OFF";
             console.log("Switch " + switchId + " is " + switchStatus);
-            // document.body.style.backgroundColor = sw.checked ? "red" : "black";
+            // sending switch status to background.js
             chrome.runtime.sendMessage({
                 message: 'from_index',
                 payload: {
