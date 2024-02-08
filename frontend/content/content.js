@@ -1,3 +1,5 @@
+let defaultDisablerActive = false;
+let iframeActive = false;
 
 window.onload = function () {
   let text = document.documentElement.outerHTML;
@@ -21,6 +23,15 @@ window.onload = function () {
     message: 'text',
     payload: text
   });
+  // Check if default disabler was active before
+  if (defaultDisablerActive) {
+    defaultDisable();
+  }
+  // Check if iframe was active before
+  console.log("iframe is: ",iframeActive);
+  if (iframeActive) {
+    init_review();
+  }
 };
 
 // Establish a connection with the background script
@@ -28,82 +39,15 @@ const port = chrome.runtime.connect({ name: "content-script" });
 port.onMessage.addListener((msg) => {
   if (msg.response === "Start Default Disabler") {
     defaultDisable();
+    defaultDisablerActive = true;
+  } else if (msg.response === "Close Default Disabler") {
+    defaultDisablerActive = false;
   } else if (msg.response === "Start Review") {
-    
-    // Inject CSS
-    var style = document.createElement('style');
-    style.textContent = `
-      .side-window {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 1000;
-        top: 0;
-        right: 0;
-        background-color: white;
-        opacity: 1;
-        overflow-x: hidden;
-        transition: 0.5s;
-        // padding-top: 60px;
-      }
-
-      .side-window a {
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-        transition: 0.3s;
-      }
-
-      .side-window a:hover {
-        color: #f1f1f1;
-      }
-
-      .side-window .closebtn {
-        position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-          }
-    `;
-    document.head.appendChild(style);
-    // Create iframe
-    var iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.height = '100%';
-    iframe.style.width = "250px";
-    iframe.style.top = '0';
-    iframe.style.right = '0';
-    iframe.style.zIndex = '1000';
-    iframe.style.border = 'none';
-    iframe.style.overflow = 'hidden';
-    iframe.style.transition = '0.5s';
-    iframe.style.backgroundColor = 'white';
-    // Create side window div
-    var sideWindow = document.createElement('div');
-    sideWindow.id = 'mySideWindow';
-    sideWindow.className = 'side-window';
-
-    // Add additional content to side window
-    sideWindow.innerHTML += `
-      <h2>Side Window</h2>
-      <p>This is a sample side window.</p>
-      `;
-
-    // Append side window to iframe
-    iframe.onload = function () {
-      iframe.contentDocument.body.appendChild(sideWindow);
-    };
-    // Append iframe to body
-    iframe.style.width = "250px";
-    document.body.appendChild(iframe);
+    init_review();
+    console.log("Review started");
   } else if (msg.response === "Close Review") {
-    // Close side window
-    var iframe = document.querySelector('iframe');
-    iframe.style.width = "0";
-    iframe.parentElement.removeChild(iframe);
+    close_review();
+    console.log("Review closed");
   }
 });
 
@@ -128,10 +72,83 @@ function defaultDisable() {
   });
 }
 
-function openSideWindow() {
-  document.getElementById("mySideWindow").style.width = "250px";
-}
+init_review = function () {
+  // Inject CSS
+  var style = document.createElement('style');
+  style.textContent = `
+    .side-window {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      right: 0;
+      background-color: white;
+      opacity: 1;
+      overflow-x: hidden;
+      transition: 0.5s;
+      // padding-top: 60px;
+    }
 
-function closeSideWindow() {
-  document.getElementById("mySideWindow").style.width = "0";
-}
+    .side-window a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .side-window a:hover {
+      color: #f1f1f1;
+    }
+
+    .side-window .closebtn {
+      position: absolute;
+          top: 0;
+          right: 25px;
+          font-size: 36px;
+          margin-left: 50px;
+        }
+  `;
+  document.head.appendChild(style);
+  // Create iframe
+  var iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.height = '100%';
+  iframe.style.width = "250px";
+  iframe.style.top = '0';
+  iframe.style.right = '0';
+  iframe.style.zIndex = '1000';
+  iframe.style.border = 'none';
+  iframe.style.overflow = 'hidden';
+  iframe.style.transition = '0.5s';
+  iframe.style.backgroundColor = 'white';
+  // Create side window div
+  var sideWindow = document.createElement('div');
+  sideWindow.id = 'mySideWindow';
+  sideWindow.className = 'side-window';
+
+  // Add additional content to side window
+  sideWindow.innerHTML += `
+    <h2>Side Window</h2>
+    <p>This is a sample side window.</p>
+    `;
+
+  // Append side window to iframe
+  iframe.onload = function () {
+    iframe.contentDocument.body.appendChild(sideWindow);
+  };
+  // Append iframe to body
+  iframeActive = true;
+  iframe.style.width = "250px";
+  document.body.appendChild(iframe);
+};
+
+close_review = function () {
+    // Close side window
+    var iframe = document.querySelector('iframe');
+    iframeActive = false;
+    iframe.style.width = "0";
+    iframe.parentElement.removeChild(iframe);
+};
