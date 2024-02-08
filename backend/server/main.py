@@ -24,6 +24,7 @@ app.data = None
 def create_page(page: pageData.PageData):
     # print(page.pageData)
     app.data = ETLPipeline(page.pageData, page.pageUrl)
+    print(app.data.soup.text.strip().replace('\n', ''))
     # print('Product Name: ', data.get_product_name())
     # print('Saving: ', data.get_saving())
     # print('Discounted Price: ', data.get_discounted_price())
