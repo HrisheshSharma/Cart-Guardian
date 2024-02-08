@@ -128,8 +128,31 @@ init_review = function () {
   var sideWindow = document.createElement('div');
   sideWindow.id = 'mySideWindow';
   sideWindow.className = 'side-window';
+  
+  var reviews
+  // Fetch reviews
+  fetch("http://127.0.0.1:8000/reviews", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      reviews = data;
+      console.log("Reviews is: ",reviews);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 
   // Add additional content to side window
+  reviews.forEach(function(review) {
+    console.log("Review is: ",review);
+    var listItem = document.createElement('li');
+    listItem.textContent = review;
+    sideWindow.appendChild(listItem);
+  });
   sideWindow.innerHTML += `
     <h2>Side Window</h2>
     <p>This is a sample side window.</p>

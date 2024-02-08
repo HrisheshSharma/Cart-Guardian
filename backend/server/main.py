@@ -19,20 +19,25 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
+app.data = None
 @app.post("/page")
 def create_page(page: pageData.PageData):
     # print(page.pageData)
-    data = ETLPipeline(page.pageData, page.pageUrl)
-    print('Product Name: ', data.get_product_name())
-    print('Saving: ', data.get_saving())
-    print('Discounted Price: ', data.get_discounted_price())
-    print('MRP: ', data.get_mrp())
-    print('Return Policy: ', data.get_return_policy())
-    print('Free Delivery: ', data.get_free_delivery())
-    print('Product Details: ', data.get_product_details())
-    print('Product Description: ', data.get_product_description())
-    print('Stars: ', data.get_stars())
-    print('Total Reviews: ', data.get_total_reviews())
-    print('Image URL: ', data.get_product_images())
-    print('Reviews', data.get_reviews())
+    app.data = ETLPipeline(page.pageData, page.pageUrl)
+    # print('Product Name: ', data.get_product_name())
+    # print('Saving: ', data.get_saving())
+    # print('Discounted Price: ', data.get_discounted_price())
+    # print('MRP: ', data.get_mrp())
+    # print('Return Policy: ', data.get_return_policy())
+    # print('Free Delivery: ', data.get_free_delivery())
+    # print('Product Details: ', data.get_product_details())
+    # print('Product Description: ', data.get_product_description())
+    # print('Stars: ', data.get_stars())
+    # print('Total Reviews: ', data.get_total_reviews())
+    # print('Image URL: ', data.get_product_images())
+    # print('Reviews', data.get_reviews())
     return {"message": "Data received"}
+
+@app.get("/reviews")
+def get_reviews():
+    return app.data.get_reviews()
