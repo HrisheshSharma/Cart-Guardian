@@ -54,8 +54,8 @@ def create_page(page: pageData.PageData):
     # print(page.pageData)
     app.data = ETLPipeline(page.pageData, page.pageUrl)
     # print(app.data.soup.text.strip().replace('\n', ''))
-    print(app.data.get_product_name())
-    print(app.data.get_product_images())
+    # print(app.data.get_product_name())
+    # print(app.data.get_product_images())
     # print('Product Name: ', data.get_product_name())
     # print('Saving: ', data.get_saving())
     # print('Discounted Price: ', data.get_discounted_price())
@@ -99,10 +99,11 @@ def find_dark_pattern():
     dark_pattern_div= []
     dark_pattern_span= []
     dark_pattern_iframe= []
-    
-    for i, div in enumerate(div_list):
+    innermost_divs_text = [(i, div) for i, div in enumerate(div_list) if not div.find('div')]
+    for i, div in innermost_divs_text:
         if(div.get('id') == 'customerReviews' or div.get('class')=='col JOpGWq'):
             break
+        
         dark= pattern_matching.is_dark(div.text)
         if(dark):
             dark_div= {'pos': i, 'pattern': dark}

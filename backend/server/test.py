@@ -7,7 +7,7 @@ nlp = spacy.load("en_core_web_sm")
 matcher = Matcher(nlp.vocab)
 STOP_WORDS.remove("five")
 
-print("five" in STOP_WORDS)
+print("while" in STOP_WORDS)
 
 def preprocess_text(text):
     doc = nlp(text)

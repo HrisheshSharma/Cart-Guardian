@@ -3,6 +3,7 @@ let iframeActive = false;
 let matchActive = false;
 let priceTrackingActive = false;
 let anyToggleActive = false;
+let analyseDarkPractice = false;
 
 window.onload = function () {
   console.log("Window loaded");
@@ -58,6 +59,10 @@ port.onMessage.addListener((msg) => {
           var modal = document.getElementById('mismatchModal');
           modal.style.display = "none";
           modal.parentElement.removeChild(modal);
+        } else if (msg.response === "Analyse Dark Practices") {
+          analyse_dark_practice();
+          analyseDarkPractice = true;
+          console.log("Analyse Dark Practice started");
         }
       })
       .catch((err) => {
@@ -397,3 +402,76 @@ create_mismatch_modal = function () {
   matchActive = true;
 };
 
+function analyse_dark_practice() {
+  var style = document.createElement('style');
+  style.textContent = `
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want a dotted underline */
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+  
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width value to center the tooltip */
+  
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+  `;
+  document.head.appendChild(style);
+  fetch("http://127.0.0.1:8000/pattern", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // console.log("Dark practice is: ", data);
+      if (data) {
+        // for (let i=0; i<data.length; i++){
+        console.log("Data is: ", data);
+        let elements = document.querySelectorAll('div');
+        console.log("Elements are: ", elements);
+        let div_list = data.div;
+        for (let j = 0; j < div_list.length; j++) {
+          let pos = div_list[j].pos;
+          console.log("Position is: ", pos);
+          //let type_of_practice= div_list[j].type_of_practice;
+          elements[pos].style.backgroundColor = "#FFFF00";
+          elements[pos].style.border = "2px solid #FF0000";
+          elements[pos].style.color = "#FF0000";
+          elements[pos].style.fontWeight = "bold";
+          elements[pos].className += " tooltip";
+          let span = document.createElement('span');
+          span.className = "tooltiptext";
+          span.textContent = div_list[j].pattern;
+          elements[pos].appendChild(span);
+          //element[pos].title= type_of_practice;
+        }
+        // }
+        analyseDarkPractice = true;
+      } else {
+        analyseDarkPractice = true;
+      }
+    })
+}
