@@ -33,3 +33,21 @@ chrome.storage.local.get("switchState", function (result) {
         });
     });
 });
+// chrome.webNavigation.onCompleted.addListener(function (details) {
+//     if (details.frameId === 0) {
+//         var switches = document.querySelectorAll('input[type="checkbox"]');
+//         switches.forEach(function (sw) {
+//             var switchId = sw.id;
+//             var switchStatus = sw.checked ? "ON" : "OFF";
+//             if (switchStatus === "ON") {
+//                 chrome.runtime.sendMessage({
+//                     message: 'from_index',
+//                     payload: {
+//                         "switch_response": sw.checked,
+//                         "switch_id": switchId
+//                     }
+//                 });
+//             }
+//         });
+//     }
+// });
