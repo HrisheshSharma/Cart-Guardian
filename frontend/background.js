@@ -27,6 +27,8 @@ chrome.runtime.onMessage.addListener((request, _, __) => {
       contentScriptPort.postMessage({ response: "Start Review" });
     } else if (payload.switch_id === 'Review' && payload.switch_response === false) {
       contentScriptPort.postMessage({ response: "Close Review" });
+    } else if (payload.switch_id === 'Match' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "Start Match" });
     }
   }
 });

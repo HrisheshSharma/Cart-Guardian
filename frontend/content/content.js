@@ -30,7 +30,7 @@ window.onload = function () {
   // Check if iframe was active before
   console.log("iframe is: ",iframeActive);
   if (iframeActive) {
-    init_review();
+    // init_review();
   }
 };
 
@@ -48,6 +48,9 @@ port.onMessage.addListener((msg) => {
   } else if (msg.response === "Close Review") {
     close_review();
     console.log("Review closed");
+  } else if (msg.response === "Start Match") {
+
+    console.log("Match started");
   }
 });
 
