@@ -1,29 +1,15 @@
 let defaultDisablerActive = false;
 let iframeActive = false;
 let matchActive = false;
+let priceTrackingActive = false;
+let anyToggleActive = false;
 
 window.onload = function () {
-  let text = document.documentElement.outerHTML;
-  console.log(text);
-
-  fetch("http://127.0.0.1:8000/page", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ pageData: text, pageUrl: window.location.href, pageTitle: document.title }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-  chrome.runtime.sendMessage({
-    message: 'text',
-    payload: text
-  });
+  console.log("Window loaded");
+  console.log("anyToggleActive is: ", anyToggleActive);
+  if(anyToggleActive){
+    send_HTML_to_server();
+  }
   // Check if default disabler was active before
   if (defaultDisablerActive) {
     defaultDisable();
@@ -31,13 +17,17 @@ window.onload = function () {
   // Check if iframe was active before
   console.log("iframe is: ", iframeActive);
   if (iframeActive) {
-    // init_review();
+    init_review();
   }
 };
 
 // Establish a connection with the background script
 const port = chrome.runtime.connect({ name: "content-script" });
 port.onMessage.addListener((msg) => {
+  if(!anyToggleActive){
+    send_HTML_to_server();
+  }
+  anyToggleActive = true;
   if (msg.response === "Start Default Disabler") {
     defaultDisable();
     defaultDisablerActive = true;
@@ -59,6 +49,29 @@ port.onMessage.addListener((msg) => {
     modal.parentElement.removeChild(modal);
   }
 });
+
+function send_HTML_to_server() {
+  let text = document.documentElement.outerHTML;
+  console.log(text);
+  fetch("http://127.0.0.1:8000/page", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ pageData: text, pageUrl: window.location.href, pageTitle: document.title }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  chrome.runtime.sendMessage({
+    message: 'text',
+    payload: text
+  });
+};
 
 function defaultDisable() {
   var inputs = document.querySelectorAll('input, select, textarea');
