@@ -28,7 +28,7 @@ window.onload = function () {
     defaultDisable();
   }
   // Check if iframe was active before
-  console.log("iframe is: ",iframeActive);
+  console.log("iframe is: ", iframeActive);
   if (iframeActive) {
     // init_review();
   }
@@ -117,6 +117,7 @@ init_review = function () {
   document.head.appendChild(style);
   // Create iframe
   var iframe = document.createElement('iframe');
+  iframe.id = 'myIframe1';
   iframe.style.position = 'fixed';
   iframe.style.height = '100%';
   iframe.style.width = "250px";
@@ -131,7 +132,7 @@ init_review = function () {
   var sideWindow = document.createElement('div');
   sideWindow.id = 'mySideWindow';
   sideWindow.className = 'side-window';
-  
+
   var reviews
   // Fetch reviews
   fetch("http://127.0.0.1:8000/reviews", {
@@ -143,9 +144,9 @@ init_review = function () {
     .then((res) => res.json())
     .then((data) => {
       reviews = data;
-      console.log("Reviews is: ",reviews);
-      reviews.forEach(function(review) {
-        console.log("Review is: ",review);
+      console.log("Reviews is: ", reviews);
+      reviews.forEach(function (review) {
+        console.log("Review is: ", review);
         var card = create_card(review);
         sideWindow.appendChild(card);
         // var listItem = document.createElement('li');
@@ -158,10 +159,10 @@ init_review = function () {
     });
 
   // Add additional content to side window
-  
+
   sideWindow.innerHTML += `
-    <h2>Side Window</h2>
-    <p>This is a sample side window.</p>
+    <h2>Expert Reviews</h2>
+    <p>Following are some of the expert reviews from various sources.</p>
     `;
 
   // Append side window to iframe
@@ -175,11 +176,13 @@ init_review = function () {
 };
 
 close_review = function () {
-    // Close side window
-    var iframe = document.querySelector('iframe');
-    iframeActive = false;
-    iframe.style.width = "0";
-    iframe.parentElement.removeChild(iframe);
+  var iframe = document.getElementById('myIframe1');
+  console.log("iframe is: ", iframe);
+  console.log("iframe width is: ", iframe.style.width);
+  iframeActive = false;
+  iframe.style.width = "0";
+  console.log("iframe new width is: ", iframe.style.width);
+  iframe.parentElement.removeChild(iframe);
 };
 
 create_card = function (review) {
