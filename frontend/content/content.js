@@ -110,6 +110,10 @@ port.onMessage.addListener((msg) => {
     } else if (msg.response === "Close Summarization") {
       close_policy();
       console.log("Summarization closed");
+    } else if (msg.response === "Analyse Dark Practices") {
+      analyse_dark_practice();
+      analyseDarkPractice = true;
+      console.log("Analyse Dark Practice started");
     }
   }
 });
