@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import pageData
 from ETL import ETLPipeline
+import pattern_matching
 
 app = FastAPI()
 origins = ["*"]
@@ -42,3 +43,32 @@ def create_page(page: pageData.PageData):
 @app.get("/reviews")
 def get_reviews():
     return app.data.get_reviews()
+
+@app.get("/pattern")
+def find_dark_pattern():
+    div_list= app.data.soup.find_all('div')
+    # span_list= app.data.soup.find_all('span')
+    # iframe_list= app.data.soup.find_all('iframe')
+    dark_pattern_div= []
+    dark_pattern_span= []
+    dark_pattern_iframe= []
+    
+    for i, div in enumerate(div_list):
+        dark= pattern_matching.is_dark(div.text)
+        if(dark):
+            dark_div= {'pos': i, 'pattern': dark}
+            dark_pattern_div.append(dark_div)
+    
+    # for i, span in enumerate(span_list):
+    #     dark= pattern_matching.is_dark(span.text)
+    #     if(dark):
+    #         dark_span= {'pos': i, 'pattern': dark}
+    #         dark_pattern_span.append(dark_span)
+    
+    # for i, iframe in enumerate(iframe_list):
+    #     dark= pattern_matching.is_dark(iframe.text)
+    #     if(dark):
+    #         dark_iframe= {'pos': i, 'pattern': dark}
+    #         dark_pattern_iframe.append(dark_iframe)
+    
+    return {'div': dark_pattern_div, 'span': dark_pattern_span, 'iframe': dark_pattern_iframe}

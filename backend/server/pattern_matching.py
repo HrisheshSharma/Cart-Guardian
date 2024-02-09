@@ -1,11 +1,6 @@
 import spacy
 from spacy.matcher import Matcher
-import json
-
 import patterns
-
-import pprint
-pp = pprint.PrettyPrinter()
 
 # NLP and Matcher object
 nlp = spacy.load("en_core_web_sm")
@@ -31,40 +26,13 @@ matcher.add("low_stock_message", patterns.patterns_low_stock_message)
 matcher.add("high_demand_message", patterns.patterns_high_demand_message)
 matcher.add("activity_message", patterns.patterns_activity_message)
 
-# on match event handler
-def on_match(doc, match_id, start, end, text_segment, segments):
-    id = text_segment["id"] # segment id`
-    # segment_info = text_segment # segment info
-    pattern = nlp.vocab.strings[match_id]  # pattern match ID
-    span = doc[start:end]  # matched span
-    # print(span.text)
-
-    # update segments object
-    if str(id) not in segments.keys():
-        text_segment["span"] = span.text
-        segments[str(id)] = {}
-        segments[str(id)]["segment_info"] = text_segment
-        segments[str(id)]["text_analysis"] = {}
-        segments[str(id)]["text_analysis"][pattern] = {"doc": doc.text, "span": span.text, "span_length": len(span.text)}
-    else:
-        if str(pattern) not in segments[str(id)]["text_analysis"].keys():
-            segments[str(id)]["text_analysis"][str(pattern)] = {"doc": doc.text, "span": span.text, "span_length": len(span.text)}
-        else:
-            current_span_length = segments[str(id)]["text_analysis"][str(pattern)]["span_length"]
-            if(len(span.text) > current_span_length):
-                segments[str(id)]["text_analysis"][str(pattern)] = {"doc": doc.text, "span": span.text, "span_length": len(span.text)}
-
 # match patterns
-def match_patterns(text_segments):
-    segments = {}
-    for text_segment in text_segments:
-        doc = nlp(text_segment)
-        matches = matcher(doc)
-        print(matches)
-        for match_id, start, end in matches:
-            print(doc, match_id, start, end, text_segment, segments)
-            on_match(doc, match_id, start, end, text_segment, segments)
-    return segments
-
-
-print(match_patterns(["rate this app now"]))
+def is_dark(text):
+    doc = nlp(text)
+    matches = matcher(doc)
+    if matches:
+        pattern= nlp.vocab.strings[matches[0][0]]
+        print("text\n", text)
+        print("pattern", pattern)
+        return pattern
+    return False
