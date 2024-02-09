@@ -141,18 +141,21 @@ init_review = function () {
     .then((data) => {
       reviews = data;
       console.log("Reviews is: ",reviews);
+      reviews.forEach(function(review) {
+        console.log("Review is: ",review);
+        var card = create_card(review);
+        sideWindow.appendChild(card);
+        // var listItem = document.createElement('li');
+        // listItem.textContent = review;
+        // sideWindow.appendChild(listItem);
+      });
     })
     .catch((err) => {
       console.error(err);
     });
 
   // Add additional content to side window
-  reviews.forEach(function(review) {
-    console.log("Review is: ",review);
-    var listItem = document.createElement('li');
-    listItem.textContent = review;
-    sideWindow.appendChild(listItem);
-  });
+  
   sideWindow.innerHTML += `
     <h2>Side Window</h2>
     <p>This is a sample side window.</p>
@@ -175,3 +178,28 @@ close_review = function () {
     iframe.style.width = "0";
     iframe.parentElement.removeChild(iframe);
 };
+
+create_card = function (review) {
+  var card = document.createElement('div');
+  card.style.width = "100%";
+  card.style.border = "1px solid #000";
+  card.style.padding = "10px";
+  card.style.marginBottom = "10px";
+
+  // Create a website
+  var website = document.createElement('h3');
+  website.textContent = review.website; // Assuming review has a website property
+  card.appendChild(website);
+
+  // Create a link
+  var link = document.createElement('a');
+  link.href = review.link; // Assuming review has a link property
+  link.textContent = "Read More";
+  card.appendChild(link);
+
+  // Create a text area
+  var textArea = document.createElement('p');
+  textArea.textContent = review.review; // Assuming review has a review property
+  card.appendChild(textArea);
+  return card;
+}

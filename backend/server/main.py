@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from models import pageData
 from ETL import ETLPipeline
+from Review import Reviews
 
 app = FastAPI()
 origins = ["*"]
@@ -40,4 +41,5 @@ def create_page(page: pageData.PageData):
 
 @app.get("/reviews")
 def get_reviews():
-    return app.data.get_reviews()
+    search = Reviews()
+    return search.get_reviews(app.data.get_product_name())
