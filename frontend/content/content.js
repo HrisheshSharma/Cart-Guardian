@@ -74,6 +74,9 @@ port.onMessage.addListener((msg) => {
           analyse_dark_practice();
           analyseDarkPractice = true;
           console.log("Analyse Dark Practice started");
+        }else if (msg.response === "PriceTracking") {
+          priceTracking();
+          priceTrackingActive = true;
         }
       })
       .catch((err) => {
@@ -591,4 +594,7 @@ function analyse_dark_practice() {
         analyseDarkPractice = true;
       }
     })
+}
+
+function priceTracking() {
 }

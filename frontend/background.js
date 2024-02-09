@@ -37,6 +37,8 @@ chrome.runtime.onMessage.addListener((request, _, __) => {
       contentScriptPort.postMessage({ response: "Close Summarization" });
     } else if (payload.switch_id === 'AnalyseDarkPattern' && payload.switch_response === true) {
       contentScriptPort.postMessage({ response: "Analyse Dark Practices" });
+    } else if (payload.switch_id === 'PriceTracking' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "PriceTracking" });
     }
   }
 });
