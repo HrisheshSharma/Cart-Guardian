@@ -7,8 +7,8 @@ from Review import Reviews
 import requests
 import pattern_matching
 
-llm_server_url = 'https://7a09-34-143-192-19.ngrok-free.app/'
-vlm_server_url = 'https://fc74-34-75-15-111.ngrok-free.app/'
+llm_server_url = 'https://cde6-35-238-251-29.ngrok-free.app/'
+vlm_server_url = 'https://80c1-35-189-1-141.ngrok-free.app/'
 
 app = FastAPI()
 origins = ["*"]
@@ -81,6 +81,7 @@ def get_reviews():
 @app.get("/match")
 def match_product():
     res = match_product_image()
+    print(res)
     if res is None:
         return True
     if 'true' in res.lower():

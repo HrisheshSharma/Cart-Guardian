@@ -7,7 +7,7 @@ let anyToggleActive = false;
 window.onload = function () {
   console.log("Window loaded");
   console.log("anyToggleActive is: ", anyToggleActive);
-  if(anyToggleActive){
+  if (anyToggleActive) {
     send_HTML_to_server();
   }
   // Check if default disabler was active before
@@ -24,29 +24,71 @@ window.onload = function () {
 // Establish a connection with the background script
 const port = chrome.runtime.connect({ name: "content-script" });
 port.onMessage.addListener((msg) => {
-  if(!anyToggleActive){
-    send_HTML_to_server();
-  }
-  anyToggleActive = true;
-  if (msg.response === "Start Default Disabler") {
-    defaultDisable();
-    defaultDisablerActive = true;
-  } else if (msg.response === "Close Default Disabler") {
-    defaultDisablerActive = false;
-  } else if (msg.response === "Start Review") {
-    init_review();
-    console.log("Review started");
-  } else if (msg.response === "Close Review") {
-    close_review();
-    console.log("Review closed");
-  } else if (msg.response === "Start Match") {
-    create_mismatch_modal();
-    console.log("Match started");
-  } else if (msg.response === "Close Match") {
-    matchActive = false;
-    var modal = document.getElementById('mismatchModal');
-    modal.style.display = "none";
-    modal.parentElement.removeChild(modal);
+  console.log("Message received in content script: ", msg);
+  if (!anyToggleActive) {
+    let text = document.documentElement.outerHTML;
+    console.log(text);
+    fetch("http://127.0.0.1:8000/page", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pageData: text, pageUrl: window.location.href, pageTitle: document.title }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        anyToggleActive = true;
+        if (msg.response === "Start Default Disabler") {
+          defaultDisable();
+          defaultDisablerActive = true;
+        } else if (msg.response === "Close Default Disabler") {
+          defaultDisablerActive = false;
+        } else if (msg.response === "Start Review") {
+          init_review();
+          console.log("Review started");
+        } else if (msg.response === "Close Review") {
+          close_review();
+          console.log("Review closed");
+        } else if (msg.response === "Start Match") {
+          create_mismatch_modal();
+          console.log("Match started");
+        } else if (msg.response === "Close Match") {
+          matchActive = false;
+          var modal = document.getElementById('mismatchModal');
+          modal.style.display = "none";
+          modal.parentElement.removeChild(modal);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    chrome.runtime.sendMessage({
+      message: 'text',
+      payload: text
+    });
+  } else {
+    anyToggleActive = true;
+    if (msg.response === "Start Default Disabler") {
+      defaultDisable();
+      defaultDisablerActive = true;
+    } else if (msg.response === "Close Default Disabler") {
+      defaultDisablerActive = false;
+    } else if (msg.response === "Start Review") {
+      init_review();
+      console.log("Review started");
+    } else if (msg.response === "Close Review") {
+      close_review();
+      console.log("Review closed");
+    } else if (msg.response === "Start Match") {
+      create_mismatch_modal();
+      console.log("Match started");
+    } else if (msg.response === "Close Match") {
+      matchActive = false;
+      var modal = document.getElementById('mismatchModal');
+      modal.style.display = "none";
+      modal.parentElement.removeChild(modal);
+    }
   }
 });
 
@@ -139,7 +181,7 @@ init_review = function () {
   iframe.id = 'myIframe1';
   iframe.style.position = 'fixed';
   iframe.style.height = '100%';
-  iframe.style.width = "250px";
+  iframe.style.width = "270px";
   iframe.style.top = '0';
   iframe.style.right = '0';
   iframe.style.zIndex = '1000';
@@ -185,12 +227,12 @@ init_review = function () {
   closeButton.style.position = "absolute";
   closeButton.style.top = "2px";
   closeButton.style.right = "2px";
-  closeButton.addEventListener('click', function() {
+  closeButton.addEventListener('click', function () {
     iframeActive = false;
     iframe.style.width = "0";
     iframe.parentElement.removeChild(iframe);
   });
-  
+
   // Append side window to iframe
   iframe.onload = function () {
     iframe.contentDocument.body.appendChild(sideWindow);
@@ -200,7 +242,7 @@ init_review = function () {
   iframeActive = true;
   iframe.style.width = "250px";
   document.body.appendChild(iframe);
-  
+
 };
 
 close_review = function () {
@@ -215,30 +257,98 @@ close_review = function () {
 
 create_card = function (review) {
   var card = document.createElement('div');
-  card.style.width = "100%";
+  // card.style.width = "100%";
   card.style.border = "1px solid #000";
-  card.style.padding = "10px";
+  card.style.padding = "5px";
   card.style.marginBottom = "10px";
+  card.style.borderRadius = "10px";
 
   // Create a website
   var website = document.createElement('h3');
   website.textContent = review.website; // Assuming review has a website property
+  website.style.marginBlockStart = "0.5rem";
+  website.style.marginBlockEnd = "0.5rem";
   card.appendChild(website);
 
   // Create a link
   var link = document.createElement('a');
-  link.href = review.link; // Assuming review has a link property
+  link.href = review.link;
+  link.target = "_blank";
   link.textContent = "Read More";
   card.appendChild(link);
 
   // Create a text area
   var textArea = document.createElement('p');
   textArea.textContent = review.review; // Assuming review has a review property
+  textArea.style.fontSize = "14px";
   card.appendChild(textArea);
   return card;
 }
 
 create_mismatch_modal = function () {
+  // fetch("http://127.0.0.1:8000/match", {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   }
+  // })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     console.log("Match is: ", data);
+  //     if (data === false) {
+  //       // Create a modal element
+  //       var modal = document.createElement('div');
+  //       modal.id = 'mismatchModal';
+  //       modal.style.position = "fixed";
+  //       modal.style.top = "0";
+  //       modal.style.left = "0";
+  //       modal.style.width = "100%";
+  //       modal.style.height = "100%";
+  //       modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  //       modal.style.display = "flex";
+  //       modal.style.justifyContent = "center";
+  //       modal.style.alignItems = "center";
+  //       modal.style.zIndex = "1000";
+
+  //       // Create a modal content container
+  //       var modalContent = document.createElement('div');
+  //       modalContent.style.backgroundColor = "#fff";
+  //       modalContent.style.padding = "20px";
+  //       modalContent.style.border = "1px solid #000";
+  //       modalContent.style.position = "relative";
+  //       // Create a close button
+  //       var closeButton = document.createElement('button');
+  //       closeButton.textContent = "X";
+
+  //       closeButton.style.position = "absolute";
+  //       closeButton.style.top = "2px";
+  //       closeButton.style.right = "2px";
+  //       closeButton.addEventListener('click', function () {
+  //         matchActive = false;
+  //         modal.style.display = "none";
+  //         modal.parentElement.removeChild(modal);
+  //       });
+
+  //       modalContent.appendChild(closeButton);
+
+  //       var text = document.createElement('p');
+  //       text.style.color = "red";
+  //       text.textContent = "The Product Image and Description might NOT match !!!";
+
+  //       modalContent.appendChild(text);
+
+  //       modal.appendChild(modalContent);
+
+  //       // Append the modal to the document body
+  //       document.body.appendChild(modal);
+  //       matchActive = true;
+  //     } else {
+  //       matchActive = true;
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     console.error(err);
+  //   });
   // Create a modal element
   var modal = document.createElement('div');
   modal.id = 'mismatchModal';
@@ -262,28 +372,28 @@ create_mismatch_modal = function () {
   // Create a close button
   var closeButton = document.createElement('button');
   closeButton.textContent = "X";
-  
-    closeButton.style.position = "absolute";
-    closeButton.style.top = "2px";
-    closeButton.style.right = "2px";
-    closeButton.addEventListener('click', function() {
-      matchActive = false;
-      modal.style.display = "none";
-      modal.parentElement.removeChild(modal);
-    });
 
-    modalContent.appendChild(closeButton);
+  closeButton.style.position = "absolute";
+  closeButton.style.top = "2px";
+  closeButton.style.right = "2px";
+  closeButton.addEventListener('click', function () {
+    matchActive = false;
+    modal.style.display = "none";
+    modal.parentElement.removeChild(modal);
+  });
 
-    var text = document.createElement('p');
-    text.style.color = "red";
-    text.textContent = "The Product Image and Description might NOT match !!!";
+  modalContent.appendChild(closeButton);
 
-    modalContent.appendChild(text);
+  var text = document.createElement('p');
+  text.style.color = "red";
+  text.textContent = "The Product Image and Description might NOT match !!!";
 
-    modal.appendChild(modalContent);
+  modalContent.appendChild(text);
 
-    // Append the modal to the document body
-    document.body.appendChild(modal);
-    matchActive = true;
-  };
+  modal.appendChild(modalContent);
+
+  // Append the modal to the document body
+  document.body.appendChild(modal);
+  matchActive = true;
+};
 
