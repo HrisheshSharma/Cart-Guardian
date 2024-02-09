@@ -31,6 +31,12 @@ chrome.runtime.onMessage.addListener((request, _, __) => {
       contentScriptPort.postMessage({ response: "Start Match" });
     } else if (payload.switch_id === 'Match' && payload.switch_response === false) {
       contentScriptPort.postMessage({ response: "Close Match" });
+    } else if (payload.switch_id === 'Summarization' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "Start Summarization" });
+    } else if (payload.switch_id === 'Summarization' && payload.switch_response === false) {
+      contentScriptPort.postMessage({ response: "Close Summarization" });
+    } else if (payload.switch_id === 'AnalyseDarkPattern' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "Analyse Dark Practices" });
     }
   }
 });

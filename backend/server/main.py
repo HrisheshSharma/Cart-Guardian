@@ -8,7 +8,7 @@ import requests
 import pattern_matching
 import t_and_c
 
-llm_server_url = 'https://cde6-35-238-251-29.ngrok-free.app/'
+llm_server_url = 'https://80c8-104-198-243-56.ngrok-free.app'
 vlm_server_url = 'https://80c1-35-189-1-141.ngrok-free.app/'
 
 app = FastAPI()
@@ -119,10 +119,11 @@ def find_dark_pattern():
     dark_pattern_div= []
     dark_pattern_span= []
     dark_pattern_iframe= []
-    
-    for i, div in enumerate(div_list):
+    innermost_divs_text = [(i, div) for i, div in enumerate(div_list) if not div.find('div')]
+    for i, div in innermost_divs_text:
         if(div.get('id') == 'customerReviews' or div.get('class')=='col JOpGWq'):
             break
+        
         dark= pattern_matching.is_dark(div.text)
         if(dark):
             dark_div= {'pos': i, 'pattern': dark}
@@ -144,6 +145,7 @@ def find_dark_pattern():
 
 @app.get("/tandc")
 def get_tandc():
+    print("Getting T&C")
     responses = []
     tclinks = get_TandC(get_base_url(app.url))
     for link in tclinks:
@@ -157,5 +159,6 @@ def get_tandc():
                 # print(tc2000)
                 summary = llm_request('summarization', tc2000).get('output')
                 summaries += summary + '\n'
-            responses.append({'link': link.get('link'), 'text': link.get('text'), 'summary': summaries})
+            responses.append({'link': link.get('link'), 'website': link.get('text'), 'review': summaries})
+            break
     return responses
