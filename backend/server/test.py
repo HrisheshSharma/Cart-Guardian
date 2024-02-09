@@ -27,15 +27,14 @@ def preprocess_text(text):
 #     {"LOWER": {"IN": ["hrs", "mins", "secs", "hours", "minutes", "seconds", "hr", "min", "sec"]}}
 # ]
 
-pattern1_default_choice = [
-    {"LEMMA": {"IN": ["click", "press", "subscribe", "use"]}, "OP": "+"},
+pattern1_nagging = [
+    {"POS": "VERB", "OP":"?"},
+    {"LEMMA": {"IN": ["rate", "upvote", "subscribe", "install"]}, "OP": "+"},
     {"IS_ALPHA": True, "OP": "*"},
-    {"LEMMA": {"IN": ["button", "check"]}, "OP": "?"},
-    {"IS_ALPHA": True, "OP": "*"},
-    {"LOWER": {"IN": ["permission", "consent", "terms", "conditions", "policy"]}, "OP": "+"},
+    {"LOWER": {"IN": ["us", "app", "now", "image", "picture", "video", "feature", "product", "discount"]}, "OP": "+"},
+    {"LOWER": {"IN": ["now", "continue", "discount"]}, "OP": "?"}
 ]
-
-matcher.add("pattern8_countdown_timer", [pattern1_default_choice])
+matcher.add("pattern8_countdown_timer", [pattern1_nagging])
 
 # on match event handler
 def on_match(doc, match_id, start, end, text_segment, segments):
@@ -44,7 +43,7 @@ def on_match(doc, match_id, start, end, text_segment, segments):
     span = doc[start:end]  # matched span
     print(span.text)
 
-text= "And mand ka tola"
+text= "apple macbook air laptopmerchant video"
 
 text= preprocess_text(text)
 print(text)

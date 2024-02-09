@@ -101,11 +101,13 @@ def find_dark_pattern():
     dark_pattern_iframe= []
     
     for i, div in enumerate(div_list):
+        if(div.get('id') == 'customerReviews' or div.get('class')=='col JOpGWq'):
+            break
         dark= pattern_matching.is_dark(div.text)
         if(dark):
             dark_div= {'pos': i, 'pattern': dark}
             dark_pattern_div.append(dark_div)
-    
+            
     # for i, span in enumerate(span_list):
     #     dark= pattern_matching.is_dark(span.text)
     #     if(dark):
@@ -119,3 +121,4 @@ def find_dark_pattern():
     #         dark_pattern_iframe.append(dark_iframe)
     
     return {'div': dark_pattern_div, 'span': dark_pattern_span, 'iframe': dark_pattern_iframe}
+

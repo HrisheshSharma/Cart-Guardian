@@ -1,8 +1,8 @@
 #1. Nagging: Trying to force the users to perform some actions like subscribing to newsletters, giving ratings, etc.
 pattern1_nagging = [
     {"POS": "VERB", "OP":"?"},
-    {"LEMMA": {"IN": ["rate", "upvote", "subscribe", "install"]}, "OP": "?"},
-    {"LOWER": {"IN": ["this"]}, "OP": "?"},
+    {"LEMMA": {"IN": ["rate", "upvote", "subscribe", "install"]}, "OP": "+"},
+    {"IS_ALPHA": True, "OP": "*"},
     {"LOWER": {"IN": ["us", "app", "now", "image", "picture", "video", "feature", "product", "discount"]}, "OP": "+"},
     {"LOWER": {"IN": ["now", "continue", "discount"]}, "OP": "?"}
 ]
@@ -42,7 +42,7 @@ pattern4_nagging = [
 
 pattern5_nagging = [
     {"LEMMA": {"IN": ["star"]}},
-    {"LEMMA": {"IN": ["rate", "review", "rating"]}, "OP": "?"}
+    {"LEMMA": {"IN": ["rate", "review", "rating"]}}
 ]
 #Sample: "Give us star rating"
 
@@ -61,7 +61,7 @@ pattern1_bait_and_switch = [
 pattern2_bait_and_switch = [
     {"LOWER": {"IN": ["start", "turn", "add", "yes", "next", "sign", "ok", "continue", "unlock", "subscribe", "confirm", "setup", "signup"]}},
     {"IS_ALPHA": True, "OP": "*"},
-    {"LEMMA": {"IN": ["free", "earn", "discount", "coupon", "sale", "notifications"]}, "OP": "?"},
+    {"LEMMA": {"IN": ["free", "earn", "discount", "coupon", "sale", "notifications"]}, "OP": "+"},
     {"LOWER": {"IN": ["on", "in", "up", "off", "now"]}, "OP": "*"}
 ]
 #Sample: "Subscribe now", "Turn on notifications", "Add to cart", "Continue to checkout", "Unlock the feature", "Confirm the order", "Setup your account"
@@ -69,8 +69,7 @@ pattern2_bait_and_switch = [
 pattern3_bait_and_switch = [
     {"LEMMA": {"IN": ["sign", "signup", "register", "join", "subscribe"]}},
     {"IS_ALPHA": True, "OP": "*"},
-    {"LOWER": {"IN": ["agree", "accept", "comfortable"]}, "OP": "?"},
-    {"LOWER": {"IN": ["policy", "terms", "condition"]}, "OP": "?"},
+    {"LOWER": {"IN": ["agree", "accept", "comfortable", "policy", "terms", "condition"]}, "OP": "+"},
 ]
 #Sample: "By signing up, you agree to our terms and conditions."
 
@@ -131,6 +130,7 @@ pattern1_forced_enrollment = [
 #Sample: "Join us to get the latest updates on our terms and conditions", "Subscribe to our newsletter to get the latest policies"
 
 pattern2_forced_enrollment = [
+    {"LEMMA": {"IN": ["permission", "click", "agree", "join", "select"]}, "OP": "+"},
     {"LOWER": {"IN": ["terms", "policies"]}},
     {"IS_ALPHA": True, "OP": "*"},
     {"LOWER": {"IN": ["conditions", "policies"]}}
@@ -153,11 +153,11 @@ patterns_default_choice = [pattern1_default_choice]
 
 #8. False Hierarchy: Misleading the users into believing that they are making a decision, when in reality, they are not.
 
-pattern1_false_hierarchy = [
-    {"LOWER": {"IN": ["start", "turn", "add", "yes", "next", "sign", "ok", "continue", "unlock", "subscribe", "confirm", "setup"]}, "OP": "+"},
-    {"LOWER": {"IN": ["on", "in", "up", "off", "now", "thanks", "up", "later", "anytime", "no", "not", "later", "cancel", "skip", "exit"]}, "OP": "?"}
-]
-patterns_false_hierarchy = [pattern1_false_hierarchy]
+# pattern1_false_hierarchy = [
+#     {"LOWER": {"IN": ["start", "turn", "add", "yes", "next", "sign", "ok", "continue", "unlock", "subscribe", "confirm", "setup"]}, "OP": "+"},
+#     {"LOWER": {"IN": ["on", "in", "up", "off", "now", "thanks", "up", "later", "anytime", "no", "not", "later", "cancel", "skip", "exit"]}, "OP": "?"}
+# ]
+# patterns_false_hierarchy = [pattern1_false_hierarchy]
 
 #9. Countdown Timer: Creating a sense of urgency by displaying a countdown timer for a limited time offer.
 
