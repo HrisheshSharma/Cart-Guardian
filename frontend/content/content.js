@@ -1,5 +1,6 @@
 let defaultDisablerActive = false;
 let iframeActive = false;
+let matchActive = false;
 
 window.onload = function () {
   let text = document.documentElement.outerHTML;
@@ -49,8 +50,13 @@ port.onMessage.addListener((msg) => {
     close_review();
     console.log("Review closed");
   } else if (msg.response === "Start Match") {
-
+    create_mismatch_modal();
     console.log("Match started");
+  } else if (msg.response === "Close Match") {
+    matchActive = false;
+    var modal = document.getElementById('mismatchModal');
+    modal.style.display = "none";
+    modal.parentElement.removeChild(modal);
   }
 });
 
@@ -149,9 +155,6 @@ init_review = function () {
         console.log("Review is: ", review);
         var card = create_card(review);
         sideWindow.appendChild(card);
-        // var listItem = document.createElement('li');
-        // listItem.textContent = review;
-        // sideWindow.appendChild(listItem);
       });
     })
     .catch((err) => {
@@ -164,15 +167,27 @@ init_review = function () {
     <h2>Expert Reviews</h2>
     <p>Following are some of the expert reviews from various sources.</p>
     `;
-
+  var closeButton = document.createElement('button');
+  closeButton.textContent = "X";
+  closeButton.style.position = "absolute";
+  closeButton.style.top = "2px";
+  closeButton.style.right = "2px";
+  closeButton.addEventListener('click', function() {
+    iframeActive = false;
+    iframe.style.width = "0";
+    iframe.parentElement.removeChild(iframe);
+  });
+  
   // Append side window to iframe
   iframe.onload = function () {
     iframe.contentDocument.body.appendChild(sideWindow);
+    iframe.contentDocument.body.appendChild(closeButton);
   };
   // Append iframe to body
   iframeActive = true;
   iframe.style.width = "250px";
   document.body.appendChild(iframe);
+  
 };
 
 close_review = function () {
@@ -209,3 +224,53 @@ create_card = function (review) {
   card.appendChild(textArea);
   return card;
 }
+
+create_mismatch_modal = function () {
+  // Create a modal element
+  var modal = document.createElement('div');
+  modal.id = 'mismatchModal';
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  modal.style.display = "flex";
+  modal.style.justifyContent = "center";
+  modal.style.alignItems = "center";
+  modal.style.zIndex = "1000";
+
+  // Create a modal content container
+  var modalContent = document.createElement('div');
+  modalContent.style.backgroundColor = "#fff";
+  modalContent.style.padding = "20px";
+  modalContent.style.border = "1px solid #000";
+  modalContent.style.position = "relative";
+  // Create a close button
+  var closeButton = document.createElement('button');
+  closeButton.textContent = "X";
+  
+    closeButton.style.position = "absolute";
+    closeButton.style.top = "2px";
+    closeButton.style.right = "2px";
+    closeButton.addEventListener('click', function() {
+      matchActive = false;
+      modal.style.display = "none";
+      modal.parentElement.removeChild(modal);
+    });
+
+    modalContent.appendChild(closeButton);
+
+    var text = document.createElement('p');
+    text.style.color = "red";
+    text.textContent = "The Product Image and Description might NOT match !!!";
+
+    modalContent.appendChild(text);
+
+    modal.appendChild(modalContent);
+
+    // Append the modal to the document body
+    document.body.appendChild(modal);
+    matchActive = true;
+  };
+
