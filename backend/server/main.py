@@ -44,7 +44,10 @@ def create_page(page: pageData.PageData):
 @app.get("/reviews")
 def get_reviews():
     search = Reviews()
-    return search.get_reviews(app.data.get_product_name())
+    print(app.data.get_product_name())
+    reviews = search.get_reviews(app.data.get_product_name())
+    print(reviews)
+    return reviews
 
 @app.get("/pattern")
 def find_dark_pattern():
