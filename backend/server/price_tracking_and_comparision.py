@@ -7,7 +7,7 @@ Data = [
     Website_data(name = 'amazon', base_website = 'https://www.amazon.in', search_url = 'https://www.amazon.in/s?k=', class1 = 'a-price-whole', class2 = 'a-price-whole', name_class = 'a-size-large product-title-word-break'),
     Website_data(name = 'flipkart', base_website = 'https://www.flipkart.com', search_url = 'https://www.flipkart.com/search?q=', class1 = '_30jeq3 _16Jk6d', class2 = '_30jeq3 _1_WHN1', name_class = 'B_NuCI')
 ]
-def across_platform_search(id1, id2, url, flag): # here id1 and id2 should be names of platforms in small letters !!!
+def across_platform_search(id1, id2, url): # here id1 and id2 should be names of platforms in small letters !!!
     # print("i worked")
     #declarations skip while reading
     platform1_base_url = ''
@@ -56,8 +56,6 @@ def across_platform_search(id1, id2, url, flag): # here id1 and id2 should be na
     price_1 = int(tempx)
     print(f"{id1} price : ")
     print(price_1)
-    if flag == 0:
-        return
     platform2_url = platform2_url + platform1_title
     platform2_base_response = requests.get(platform2_base_url, headers = headers)
     platform2_cookies = platform2_base_response.cookies
@@ -70,10 +68,10 @@ def across_platform_search(id1, id2, url, flag): # here id1 and id2 should be na
     # temp = price[1:x]
     tempx = price.replace(',', "").replace('.', "").replace('₹', "")
     price2 = int(tempx)
-    print(f"{id2} price :")
-    print(price2)
+    
+    return {'id': id1, 'price': price_1, 'id2': id2, 'price2': price2}
 
 
 #calling function 
-across_platform_search('amazon', 'flipkart', 'https://www.amazon.in/Adidas-CBLACK-Running-Shoes-9-CL4154_9/dp/B07M8S2BQX/ref=sr_1_1?pf_rd_i=1983518031&pf_rd_m=A1VBAL9TL5WCBF&pf_rd_p=3ad2a80e-dc26-4d41-9d94-10c82be76668&pf_rd_r=TCG19MCPBN2MG50H25XE&pf_rd_s=merchandised-search-6&pf_rd_t=30901&qid=1707487860&refinements=p_89%3AAdidas%2Cp_n_pct-off-with-tax%3A40-60&s=shoes&sr=1-1', 0)
+# across_platform_search('amazon', 'flipkart', 'https://www.amazon.in/Adidas-CBLACK-Running-Shoes-9-CL4154_9/dp/B07M8S2BQX/ref=sr_1_1?pf_rd_i=1983518031&pf_rd_m=A1VBAL9TL5WCBF&pf_rd_p=3ad2a80e-dc26-4d41-9d94-10c82be76668&pf_rd_r=TCG19MCPBN2MG50H25XE&pf_rd_s=merchandised-search-6&pf_rd_t=30901&qid=1707487860&refinements=p_89%3AAdidas%2Cp_n_pct-off-with-tax%3A40-60&s=shoes&sr=1-1', 0)
 # flag == 0 means only id1 price will be returned flag == 1 means both id1 and id2

@@ -12,7 +12,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
 
 // get message from scripts
-chrome.runtime.onMessage.addListener((request, _, __) => {
+chrome.runtime.onMessage.addListener((request, sender, _) => {
   if (request.message === "text") {
     const payload = request.payload;
     console.log('Got the text from the page:', payload)
@@ -39,6 +39,42 @@ chrome.runtime.onMessage.addListener((request, _, __) => {
       contentScriptPort.postMessage({ response: "Analyse Dark Practices" });
     } else if (payload.button_id === 'report') {
       contentScriptPort.postMessage({ response: "Report" });
+    } else if (payload.switch_id === 'PriceTracking' && payload.switch_response === true) {
+      contentScriptPort.postMessage({ response: "PriceTracking" });
     }
   }
+  else if(request.action === 'pushData') {
+    var websiteName = extractDomain(sender.tab.url);
+
+    chrome.storage.local.get(function(result) {
+      // console.log(request.data);
+      if(websiteName in result){
+        result[websiteName].push(request.data);
+      }
+      else{
+        result[websiteName] = [request.data];
+      }
+
+      chrome.storage.local.set(result);
+    });
+  }
+  else if(request.action === 'clearData'){
+    var websiteName = extractDomain(sender.tab.url);    
+    chrome.storage.local.get(function(result) {
+      result[websiteName] = [];
+      // console.log("cleared the data");
+      chrome.storage.local.set(result);
+    });
+  }
 });
+
+function extractDomain(url) {
+  var domain;
+  try {
+    domain = new URL(url).hostname;
+  } catch (error) {
+    console.error('Error extracting domain:', error);
+  }
+  return domain;
+}
+

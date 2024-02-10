@@ -8,6 +8,7 @@ import requests
 import pattern_matching
 import t_and_c
 import reportWeb
+from price_tracking_and_comparision import across_platform_search 
 
 llm_server_url = 'https://80c8-104-198-243-56.ngrok-free.app'
 vlm_server_url = 'https://80c1-35-189-1-141.ngrok-free.app/'
@@ -168,3 +169,8 @@ def get_tandc():
 def reportWebsite(report: reportPattern.Report):
     reportWeb.insert_report(report.websiteURL, report.patternType, report.status, report.pattern)
     return {"message": "Report received"}
+
+
+@app.get("/price_compare")
+def price_compare():
+    return across_platform_search('amazon', 'flipkart', app.url)
