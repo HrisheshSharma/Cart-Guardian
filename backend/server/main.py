@@ -1,12 +1,13 @@
 from typing import Union
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from models import pageData
+from models import pageData, reportPattern
 from ETL import ETLPipeline
 from Review import Reviews
 import requests
 import pattern_matching
 import t_and_c
+import reportWeb
 
 llm_server_url = 'https://80c8-104-198-243-56.ngrok-free.app'
 vlm_server_url = 'https://80c1-35-189-1-141.ngrok-free.app/'
@@ -162,3 +163,8 @@ def get_tandc():
             responses.append({'link': link.get('link'), 'website': link.get('text'), 'review': summaries})
             break
     return responses
+
+@app.post("/report")
+def reportWebsite(report: reportPattern.Report):
+    reportWeb.insert_report(report.websiteURL, report.patternType, report.status, report.pattern)
+    return {"message": "Report received"}

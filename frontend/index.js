@@ -32,6 +32,17 @@ chrome.storage.local.get("switchState", function (result) {
             });
         });
     });
+
+    var reportButton = document.getElementById('report');
+    console.log(reportButton);
+    reportButton.addEventListener("click", function () {
+        chrome.runtime.sendMessage({
+            message: 'from_index',
+            payload: {
+                "button_id": 'report'
+            }
+        });
+    });
 });
 // chrome.webNavigation.onCompleted.addListener(function (details) {
 //     if (details.frameId === 0) {
