@@ -1,21 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    var switches = document.querySelectorAll('input[type="checkbox"]');
-    switches.forEach(function (sw) {
-        sw.addEventListener("change", function () {
-            var switchId = sw.id;
-            var switchStatus = sw.checked ? "ON" : "OFF";
-            console.log("Switch " + switchId + " is " + switchStatus);
-            // sending switch status to background.js
-            chrome.runtime.sendMessage({
-                message: 'from_index',
-                payload: {
-                    "switch_response":sw.checked,
-                    "switch_id":switchId
-                }
-            });
-        });
-    });
-});
 // Retrieve the switch state from storage
 chrome.storage.local.get("switchState", function (result) {
     var switchState = result.switchState || {};
@@ -26,7 +8,7 @@ chrome.storage.local.get("switchState", function (result) {
         var switchId = sw.id;
         var switchStatus = switchState[switchId] ? "ON" : "OFF";
         sw.checked = switchState[switchId] || false;
-        console.log("Switch " + switchId + " is " + switchStatus);
+        // console.log("Switch " + switchId + " is " + switchStatus);
     });
 
     // Update the switch state in storage when it changes
@@ -34,7 +16,7 @@ chrome.storage.local.get("switchState", function (result) {
         sw.addEventListener("change", function () {
             var switchId = sw.id;
             var switchStatus = sw.checked ? "ON" : "OFF";
-            console.log("Switch " + switchId + " is " + switchStatus);
+            // console.log("Switch " + switchId + " is " + switchStatus);
 
             // Update the switch state in storage
             switchState[switchId] = sw.checked;
@@ -51,3 +33,21 @@ chrome.storage.local.get("switchState", function (result) {
         });
     });
 });
+// chrome.webNavigation.onCompleted.addListener(function (details) {
+//     if (details.frameId === 0) {
+//         var switches = document.querySelectorAll('input[type="checkbox"]');
+//         switches.forEach(function (sw) {
+//             var switchId = sw.id;
+//             var switchStatus = sw.checked ? "ON" : "OFF";
+//             if (switchStatus === "ON") {
+//                 chrome.runtime.sendMessage({
+//                     message: 'from_index',
+//                     payload: {
+//                         "switch_response": sw.checked,
+//                         "switch_id": switchId
+//                     }
+//                 });
+//             }
+//         });
+//     }
+// });

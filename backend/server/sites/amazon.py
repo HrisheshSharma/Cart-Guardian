@@ -91,8 +91,8 @@ class Amazon:
     }
 
     product_images = {
-        'element': 'div',
+        'element': 'span',
         'attrs': {
-            'id': 'imageBlock'
+            'data-action': 'main-image-click'
         }
     }
