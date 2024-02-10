@@ -120,6 +120,7 @@ port.onMessage.addListener((msg) => {
           analyseDarkPractice = true;
           console.log("Analyse Dark Practice started");
         } else if (msg.response === "PriceTracking") {
+          console.log("Price Tracking started");
           priceTracking();
           priceTrackingActive = true;
         }
@@ -754,7 +755,62 @@ reportWebsite = function () {
   });
 };
 
-function priceTracking() {}
+function priceTracking() {
+  var modal = document.createElement("div");
+  modal.id = "priceModal";
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  modal.style.display = "flex";
+  modal.style.justifyContent = "center";
+  modal.style.alignItems = "center";
+  modal.style.zIndex = "1000";
+  var modalContent = document.createElement("div");
+  modalContent.style.backgroundColor = "#fff";
+  modalContent.style.padding = "20px";
+  modalContent.style.border = "1px solid #000";
+  modalContent.style.position = "relative";
+  // Create a close button
+  var closeButton = document.createElement("button");
+  closeButton.textContent = "X";
+
+  closeButton.style.position = "absolute";
+  closeButton.style.top = "2px";
+  closeButton.style.right = "2px";
+  closeButton.addEventListener("click", function () {
+    matchActive = false;
+    modal.style.display = "none";
+    modal.parentElement.removeChild(modal);
+  });
+  modalContent.appendChild(closeButton);
+  var text = document.createElement("p");
+  text.style.color = "red";
+
+  fetch("http://127.0.0.1:8000/price_compare", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      if (data) {
+        if(data=== "Not Supported"){
+          text.textContent = "Price Tracking is not supported for this website";
+        }
+        text.textContent = "Product available on "+ data.id2+ " at "+ data.price2
+        modalContent.appendChild(text);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+      }
+      
+    });
+
+}
 
 function sneakDetection() {
   var docTitle = document.title;
@@ -1007,7 +1063,6 @@ function additionalCostDetector() {
     "delivery fee",
     "delivery charge",
     "delivery cost",
-    "tax",
     "goods and service tax",
     "gst",
     "handling fee",
@@ -1028,7 +1083,6 @@ function additionalCostDetector() {
     "packing charge",
     "packing cost",
     "packing tax",
-    "taxes",
     "service charge",
     "service fee",
     "service cost",

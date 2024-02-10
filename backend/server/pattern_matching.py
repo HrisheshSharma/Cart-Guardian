@@ -11,7 +11,7 @@ for word in exclude_from_stop_words:
     STOP_WORDS.remove(word)
 
 # Define pattern class with corresponding patterns
-# matcher.add("nagging", patterns.patterns_nagging)
+matcher.add("nagging", patterns.patterns_nagging)
 matcher.add("bait_and_switch", patterns.patterns_bait_and_switch)
 matcher.add("roach_motel", patterns.patterns_roach_motel)
 matcher.add("intermediate_currency", patterns.patterns_intermediate_currency)

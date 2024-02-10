@@ -172,4 +172,14 @@ def reportWebsite(report: reportPattern.Report):
 
 @app.get("/price_compare")
 def price_compare():
-    return across_platform_search('amazon', 'flipkart', app.url)
+    if(app.data is None or app.url is None):
+        raise HTTPException(status_code=404, detail="Data not found"
+    )
+    elif('amazon' in app.url):
+        return across_platform_search('amazon', app.data.get_product_name(), app.data.get_discounted_price(), 'flipkart', app.url)
+    
+    elif('flipkart' in app.url):
+        return across_platform_search('flipkart', app.data.get_product_name(), app.data.get_discounted_price(), 'amazon', app.url)
+    else:
+        return "Not Supported"
+    
