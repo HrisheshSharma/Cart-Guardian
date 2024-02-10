@@ -7,6 +7,41 @@ let anyToggleActive = false;
 let analyseDarkPractice = false;
 
 window.onload = function () {
+  var style = document.createElement("style");
+  style.textContent = `
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want a dotted underline */
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+  
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width value to center the tooltip */
+  
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+  `;
+  document.head.appendChild(style);
   console.log("Window loaded");
   console.log("anyToggleActive is: ", anyToggleActive);
   if (anyToggleActive) {
@@ -26,6 +61,7 @@ window.onload = function () {
     init_policy();
   }
   sneakDetection();
+  additionalCostDetector();
 };
 
 // Establish a connection with the background script
@@ -544,41 +580,6 @@ close_policy = function () {
 };
 
 function analyse_dark_practice() {
-  var style = document.createElement("style");
-  style.textContent = `
-  .tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; /* If you want a dotted underline */
-  }
-  
-  .tooltip .tooltiptext {
-    visibility: hidden;
-    width: 200px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-  
-    /* Position the tooltip text */
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px; /* Use half of the width value to center the tooltip */
-  
-    /* Fade in tooltip */
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-  }
-  `;
-  document.head.appendChild(style);
   fetch("http://127.0.0.1:8000/pattern", {
     method: "GET",
     headers: {
@@ -753,8 +754,7 @@ reportWebsite = function () {
   });
 };
 
-function priceTracking() {
-}
+function priceTracking() {}
 
 function sneakDetection() {
   var docTitle = document.title;
@@ -771,36 +771,50 @@ function sneakDetection() {
 
   for (var i = 0; i < addToCartButtons.length; i++) {
     // console.log(addToCartButtons[i].textContent);
-    addToCartButtons[i].addEventListener('click', () => {
+    addToCartButtons[i].addEventListener("click", () => {
       var bodyContent = document.body.textContent;
       var dataToPush = longestCommonSubstring(docTitle, bodyContent);
       // console.log(dataToPush);
-      chrome.runtime.sendMessage({ action: 'pushData', data: dataToPush });
+      chrome.runtime.sendMessage({ action: "pushData", data: dataToPush });
     });
   }
 
-  var checkoutWordList = ["proceed to pay", "checkout", "pay now", "buy now", "proceed to buy"];
+  var checkoutWordList = [
+    "proceed to pay",
+    "checkout",
+    "pay now",
+    "buy now",
+    "proceed to buy",
+  ];
   var checkoutButtons = getTagList(checkoutWordList);
 
-
   var lowercaseDocTitle = docTitle.toLowerCase();
-  if (lowercaseDocTitle.includes("cart") || lowercaseDocTitle.includes("checkout")) {
-
+  if (
+    lowercaseDocTitle.includes("cart") ||
+    lowercaseDocTitle.includes("checkout")
+  ) {
     var extraProducts = [];
-    var quantityTags = document.querySelectorAll('select');
+    var quantityTags = document.querySelectorAll("select");
     quantityTags.forEach(function (tag) {
       var tagContent = tag.textContent;
       var lowercaseTagContent = tagContent.toLowerCase();
-      if (lowercaseTagContent.includes('1')) {
+      if (lowercaseTagContent.includes("1")) {
         var parent = tag;
         for (var i = 0; i < 3; i++) parent = parent.parentNode;
         var parentContent = parent.textContent;
         var lowercaseContent = parentContent.toLowerCase();
-        if (lowercaseContent.includes("qty") || lowercaseContent.includes("quantity")) {
+        if (
+          lowercaseContent.includes("qty") ||
+          lowercaseContent.includes("quantity")
+        ) {
           var finalTag = tag;
           var finalContent = finalTag.innerHTML;
           // console.log("Quantity found!");
-          while (!finalContent.includes("₹") && !finalContent.includes("Rs") && !finalContent.includes("INR")) {
+          while (
+            !finalContent.includes("₹") &&
+            !finalContent.includes("Rs") &&
+            !finalContent.includes("INR")
+          ) {
             finalTag = finalTag.parentNode;
             finalContent = finalTag.innerHTML;
           }
@@ -816,12 +830,12 @@ function sneakDetection() {
             var websiteList = result[websiteName] || [];
             var valid = false;
             var n = productName.length;
-            productName = productName.replaceAll('…', '');
-            productName = productName.replaceAll('...', '');
+            productName = productName.replaceAll("…", "");
+            productName = productName.replaceAll("...", "");
             // console.log(productName);
             var zfunc = calculateZFunction(productName);
             productName = productName.slice(0, productName.length - zfunc);
-            var breakedIntoWords = productName.split('\s');
+            var breakedIntoWords = productName.split("s");
             for (var i = 0; i < websiteList.length; i++) {
               var flag = true;
               for (var j = 0; j < breakedIntoWords.length; j++) {
@@ -845,29 +859,29 @@ function sneakDetection() {
     for (var i = 0; i < checkoutButtons.length; i++) {
       // console.log(checkoutButtons[i].textContent);
       // console.log(extraProducts.length);
-      checkoutButtons[i].addEventListener('click', (event) => {
+      checkoutButtons[i].addEventListener("click", (event) => {
         var result = true;
         if (extraProducts.length > 0) {
-          var alertmessage = "The website has added following products in your cart\n";
+          var alertmessage =
+            "The website has added following products in your cart\n";
           for (var j = 0; j < extraProducts.length; j++) {
-            alertmessage += extraProducts[j] + '\n';
+            alertmessage += extraProducts[j] + "\n";
           }
           alertmessage += "Are you sure you want to continue?";
           result = confirm(alertmessage);
         }
         if (result) {
-          chrome.runtime.sendMessage({ action: 'clearData' });
-        }
-        else {
+          chrome.runtime.sendMessage({ action: "clearData" });
+        } else {
           event.preventDefault();
         }
-      })
+      });
     }
   }
 }
 
 function contains(inputText, searchStrings) {
-  var sentences = inputText.split('\n');
+  var sentences = inputText.split("\n");
   for (var i = 0; i < sentences.length; i++) {
     var currentSentence = sentences[i].trim();
     var found = true;
@@ -882,7 +896,7 @@ function contains(inputText, searchStrings) {
 }
 
 function findFirstNonBlankSentence(inputString) {
-  var sentences = inputString.split('\n');
+  var sentences = inputString.split("\n");
 
   for (var i = 0; i < sentences.length; i++) {
     var currentSentence = sentences[i].trim();
@@ -896,7 +910,7 @@ function findFirstNonBlankSentence(inputString) {
 function getTagList(wordList) {
   var tagList = [];
   var prev = [];
-  var nxt = [document.querySelector('body')];
+  var nxt = [document.querySelector("body")];
   while (nxt.length != 0) {
     prev = nxt;
     nxt = [];
@@ -910,7 +924,7 @@ function getTagList(wordList) {
         var child = childrenList[i];
         var loweraseTextContent = child.textContent.toLowerCase();
         for (var j = 0; j < wordList.length; j++) {
-          if (contains(loweraseTextContent, wordList[j].split(' '))) {
+          if (contains(loweraseTextContent, wordList[j].split(" "))) {
             nxt.push(child);
             break;
           }
@@ -950,7 +964,10 @@ function longestCommonSubstring(str1, str2) {
   }
 
   // Extract the longest common substring
-  const longestCommonSubstr = str1.substring(endIndex - maxLength + 1, endIndex + 1);
+  const longestCommonSubstr = str1.substring(
+    endIndex - maxLength + 1,
+    endIndex + 1
+  );
 
   return longestCommonSubstr;
 }
@@ -960,7 +977,7 @@ function extractDomain(url) {
   try {
     domain = new URL(url).hostname;
   } catch (error) {
-    console.error('Error extracting domain:', error);
+    console.error("Error extracting domain:", error);
   }
   return domain;
 }
@@ -980,4 +997,58 @@ function calculateZFunction(s) {
   }
 
   return z[n - 1];
+}
+
+function additionalCostDetector() {
+  var lookFor = [
+    "shipping fee",
+    "shipping charge",
+    "shipping cost",
+    "delivery fee",
+    "delivery charge",
+    "delivery cost",
+    "tax",
+    "goods and service tax",
+    "gst",
+    "handling fee",
+    "handling charge",
+    "handling cost",
+    "extra charge",
+    "extra cost",
+    "extra fee",
+    "additional charge",
+    "additional cost",
+    "additional fee",
+    "surcharge",
+    "convenience fee",
+    "convenience charge",
+    "convenience cost",
+    "convenience tax",
+    "packing fee",
+    "packing charge",
+    "packing cost",
+    "packing tax",
+    "taxes",
+    "service charge",
+    "service fee",
+    "service cost",
+  ];
+  elements = getTagList(lookFor);
+  for (let j = 0; j < elements.length; j++) {
+    highlightElement = elements[j];
+    while (!(highlightElement.textContent.toLowerCase().includes("₹") || highlightElement.textContent.toLowerCase().includes("rs") || highlightElement.textContent.toLowerCase().includes("inr") || highlightElement.textContent.toLowerCase().includes("free"))) {
+      highlightElement = highlightElement.parentElement;
+    }
+    if (highlightElement.textContent.toLowerCase().includes("free")) continue;
+    if (highlightElement.textContent.toLowerCase().includes("₹0") || highlightElement.textContent.toLowerCase().includes("₹ 0") || highlightElement.textContent.toLowerCase().includes("rs0") || highlightElement.textContent.toLowerCase().includes("rs 0") || highlightElement.textContent.toLowerCase().includes("inr0") || highlightElement.textContent.toLowerCase().includes("inr 0")) continue;
+    highlightElement.style.backgroundColor = "#FFFF00";
+    highlightElement.style.border = "2px solid #FF0000";
+    highlightElement.style.color = "#FF0000";
+    highlightElement.style.fontWeight = "bold";
+    highlightElement.className += " tooltip";
+    let span = document.createElement("span");
+    span.className = "tooltiptext";
+    span.textContent = 'Additional Cost';
+    highlightElement.appendChild(span);
+  }
 }
