@@ -921,11 +921,6 @@ function getTagList(wordList) {
   return tagList;
 }
 
-
-
-
-
-
 function longestCommonSubstring(str1, str2) {
   const m = str1.length;
   const n = str2.length;

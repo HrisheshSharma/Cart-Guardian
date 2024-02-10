@@ -170,7 +170,6 @@ def reportWebsite(report: reportPattern.Report):
     reportWeb.insert_report(report.websiteURL, report.patternType, report.status, report.pattern)
     return {"message": "Report received"}
 
-
 @app.get("/price_compare")
 def price_compare():
     return across_platform_search('amazon', 'flipkart', app.url)
